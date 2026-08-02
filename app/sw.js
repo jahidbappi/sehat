@@ -7,18 +7,24 @@
  *   - CDN runtime assets (jsDelivr: onnxruntime-web JS + WASM) and same-origin
  *     files fetched later (including model/model.int8.onnx): cache-first into
  *     a runtime cache, so repeat visits work fully offline.
- *   - Navigations: cache-first with a background refresh; if nothing is
- *     cached and the network is down, an offline fallback page is returned.
+ *   - Navigations: network-first with a short timeout, so new deployments
+ *     reach users on the next visit; falls back to the cached shell when
+ *     offline/slow, then to an offline fallback page.
  *   - Prediction calls (any /predict path) are NEVER intercepted or cached.
+ *   - sw.js itself is never served from cache; it always comes from the
+ *     network (Vercel also sends it with Cache-Control: no-cache).
  *
  * Bump CACHE_VERSION whenever the shell asset list changes; old caches are
  * purged on activation.
  */
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE = `sehat-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `sehat-runtime-${CACHE_VERSION}`;
 const KNOWN_CACHES = [SHELL_CACHE, RUNTIME_CACHE];
+
+// Navigations give up on the network after this long and use the cache.
+const NAVIGATION_TIMEOUT_MS = 3500;
 
 const SHELL_ASSETS = [
   './',
@@ -72,6 +78,10 @@ self.addEventListener('fetch', (event) => {
   // Inference API calls are never cached.
   if (url.pathname.includes('/predict')) return;
 
+  // The service worker script must always come from the network so updates
+  // are picked up immediately.
+  if (url.pathname === '/sw.js') return;
+
   if (request.mode === 'navigate') {
     event.respondWith(handleNavigation(event));
     return;
@@ -86,26 +96,46 @@ self.addEventListener('fetch', (event) => {
 
 async function handleNavigation(event) {
   const cache = await caches.open(SHELL_CACHE);
+
+  let networkResponse = null;
+  try {
+    networkResponse = await fetchWithTimeout(event.request, NAVIGATION_TIMEOUT_MS);
+  } catch {
+    networkResponse = null;
+  }
+
+  if (networkResponse && networkResponse.ok) {
+    // Refresh the cached shell; waitUntil keeps the worker alive long enough
+    // for the update to land without delaying the response.
+    event.waitUntil(cache.put('./index.html', networkResponse.clone()));
+    return networkResponse;
+  }
+
   const cached = await cache.match('./index.html');
-
-  // Refresh the cached shell in the background when online; waitUntil keeps
-  // the worker alive long enough for the update to land.
-  const refresh = fetch(event.request)
-    .then((response) => {
-      if (response.ok) cache.put('./index.html', response.clone());
-      return response;
-    })
-    .catch(() => null);
-  event.waitUntil(refresh);
-
   if (cached) return cached;
-  const fresh = await refresh;
+
   return (
-    fresh ||
+    networkResponse ||
     new Response(OFFLINE_FALLBACK_HTML, {
       headers: { 'Content-Type': 'text/html; charset=utf-8' },
     })
   );
+}
+
+function fetchWithTimeout(request, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('navigation fetch timed out')), timeoutMs);
+    fetch(request).then(
+      (response) => {
+        clearTimeout(timer);
+        resolve(response);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
 }
 
 async function cacheFirst(request) {
