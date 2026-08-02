@@ -82,6 +82,7 @@ cd app && python3 -m http.server 8080
 The app runs the INT8 ONNX model **in the browser** via onnxruntime-web
 (WebAssembly) — X-rays never leave the device. A remote mode can instead call a
 running `sehat.serving` API (`POST /predict`). See `app/README.md` for details.
+Deployable as-is on Vercel (static, no build) — see `app/README.md`.
 
 ## Repository layout
 

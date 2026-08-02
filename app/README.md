@@ -23,6 +23,32 @@ A service worker provides the offline support, so the app must be served over
 `http://localhost` (any port) or `https://` — opening `index.html` via
 `file://` will not work.
 
+## Deploy to Vercel
+
+The app is static and buildless, so it deploys as-is. Two options:
+
+**(a) Vercel dashboard** — import the repo, set **Root Directory** to `app/`.
+No build command and no output directory override are needed; `vercel.json`
+ships the header rules (service worker always revalidates, the model file gets
+a long-lived immutable cache).
+
+**(b) Vercel CLI:**
+
+```bash
+cd app && vercel deploy --prod
+```
+
+**Honest caveats for a production deployment:**
+
+- `model/model.int8.onnx` is gitignored (too large for git), so it is **not**
+  part of the deploy. On-device inference on the deployed site needs the model
+  hosted separately — e.g. Vercel Blob or another external URL that
+  `js/inference.js` is pointed at — or the app used in **remote server mode**
+  against a hosted `sehat.serving` instance.
+- The FastAPI serving service (`sehat.serving`) is better deployed on
+  Railway, Render, or Hugging Face Spaces than on Vercel serverless — the
+  model artifact size and cold starts are a poor fit for serverless functions.
+
 ## Two screening modes
 
 | Mode | How it works | Requirements |
