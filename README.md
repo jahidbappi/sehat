@@ -2,8 +2,7 @@
 
 > AI disease screening for the four billion people a radiologist never visits.
 
-<!-- Badges: replace OWNER with the GitHub org/user once the repo is published. -->
-[![CI](https://github.com/OWNER/sehat/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/sehat/actions/workflows/ci.yml)
+[![CI](https://github.com/jahidbappi/sehat/actions/workflows/ci.yml/badge.svg)](https://github.com/jahidbappi/sehat/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
 
