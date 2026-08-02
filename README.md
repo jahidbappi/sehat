@@ -69,7 +69,7 @@ Training, evaluation, edge export, and serving live in the companion modules
 
 ## Web app (`app/`)
 
-**Live demo:** https://sehat-eosin.vercel.app
+**Live demo:** https://sehat-health.vercel.app
 
 A static, buildless offline-first PWA for clinics — no npm, no build step:
 
