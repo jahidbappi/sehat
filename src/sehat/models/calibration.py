@@ -13,7 +13,8 @@ tuples, numpy arrays, or torch tensors.
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING, Iterable, Union
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     import torch
@@ -62,9 +63,7 @@ class TemperatureScaler:
         if not z:
             raise ValueError("Cannot fit TemperatureScaler on empty inputs")
         if len(z) != len(y):
-            raise ValueError(
-                f"logits and labels must have equal length, got {len(z)} and {len(y)}"
-            )
+            raise ValueError(f"logits and labels must have equal length, got {len(z)} and {len(y)}")
         if any(v not in (0.0, 1.0) for v in y):
             raise ValueError("labels must be binary (0 or 1)")
 
@@ -103,7 +102,8 @@ class TemperatureScaler:
 def _mean_nll(logits: list[float], labels: list[float], temperature: float) -> float:
     """Mean binary NLL of ``logits / temperature`` with a stable softplus."""
     total = 0.0
-    for z, y in zip(logits, labels):
+    # strict=True: NLL over mismatched logits/labels is a bug, not truncation.
+    for z, y in zip(logits, labels, strict=True):
         x = z / temperature
         total += max(x, 0.0) + math.log1p(math.exp(-abs(x))) - y * x
     return total / len(logits)

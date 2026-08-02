@@ -59,9 +59,7 @@ def build_model(
         ImportError: If torch/torchvision are not installed.
     """
     if arch not in _ARCH_REGISTRY:
-        raise ValueError(
-            f"Unsupported arch {arch!r}; supported: {', '.join(_ARCH_REGISTRY)}"
-        )
+        raise ValueError(f"Unsupported arch {arch!r}; supported: {', '.join(_ARCH_REGISTRY)}")
     if num_classes <= 0:
         raise ValueError(f"num_classes must be positive, got {num_classes}")
     if not 0.0 <= dropout < 1.0:
@@ -116,9 +114,9 @@ def load_backbone_from_ckpt(
         ValueError: If the checkpoint does not contain a usable state dict.
         ImportError: If torch is not installed.
     """
-    import os
+    from pathlib import Path
 
-    if not os.path.exists(path):
+    if not Path(path).exists():
         raise FileNotFoundError(f"Checkpoint not found: {path}")
 
     import torch
@@ -129,7 +127,7 @@ def load_backbone_from_ckpt(
         raise ValueError(f"No state_dict found in checkpoint: {path}")
 
     model_state = {
-        key[len(_CKPT_MODEL_PREFIX):]: value
+        key[len(_CKPT_MODEL_PREFIX) :]: value
         for key, value in state_dict.items()
         if key.startswith(_CKPT_MODEL_PREFIX)
     }

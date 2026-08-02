@@ -10,6 +10,7 @@ its ``yaml`` import and raises an actionable error when PyYAML is absent;
 from __future__ import annotations
 
 import dataclasses
+import types
 from collections.abc import Mapping
 from dataclasses import dataclass, fields
 from pathlib import Path
@@ -141,7 +142,10 @@ class TrainConfig:
 
 def _coerce(hint: Any, value: Any, name: str) -> Any:
     """Coerce ``value`` to the annotated type of field ``name``."""
-    if get_origin(hint) is Union:
+    origin = get_origin(hint)
+    # Accept both typing.Union and PEP 604 unions (float | None), whose
+    # origin is types.UnionType on Python 3.10+.
+    if origin is Union or origin is types.UnionType:
         args = [arg for arg in get_args(hint) if arg is not type(None)]
         if value is None:
             if len(args) < len(get_args(hint)):

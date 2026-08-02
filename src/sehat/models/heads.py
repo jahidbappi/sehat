@@ -33,5 +33,5 @@ class ClassificationHead(nn.Module):
         self.fc = nn.Linear(in_features, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Map pooled backbone features of shape ``(B, in_features)`` to logits ``(B, num_classes)``."""
+        """Map pooled backbone features ``(B, in_features)`` to logits ``(B, num_classes)``."""
         return self.fc(self.drop(x))
