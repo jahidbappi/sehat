@@ -18,7 +18,7 @@
  * purged on activation.
  */
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const SHELL_CACHE = `sehat-shell-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `sehat-runtime-${CACHE_VERSION}`;
 const KNOWN_CACHES = [SHELL_CACHE, RUNTIME_CACHE];
@@ -36,6 +36,10 @@ const SHELL_ASSETS = [
   './js/store.js',
   './manifest.webmanifest',
   './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-180.png',
+  './icons/icon-maskable-512.png',
   './model/README.md',
 ];
 
