@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sehat — TB Screening</title>
+  <meta name="description" content="Offline-first chest X-ray screening decision-support for TB in low-resource clinics. Decision-support only — not a medical diagnosis.">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1715">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <div class="banner" role="note">
+    <p><strong>Decision-support only.</strong> Not a medical diagnosis. Confirm with a qualified radiologist.</p>
+  </div>
+
+  <noscript>
+    <div class="banner">
+      <p><strong>JavaScript is required.</strong> Sehat runs its screening model inside your browser; please enable JavaScript to use it.</p>
+    </div>
+  </noscript>
+
+  <header class="app-header">
+    <div class="brand">
+      <img class="brand-mark" src="icons/icon.svg" alt="" width="44" height="44">
+      <div>
+        <h1>Sehat</h1>
+        <p class="tagline">TB screening · chest X-ray decision support</p>
+      </div>
+    </div>
+
+    <fieldset class="segmented" id="mode-group">
+      <legend class="visually-hidden">Screening mode</legend>
+      <label class="segment">
+        <input type="radio" name="mode" value="on-device" id="mode-on-device" checked>
+        <span>On-device</span>
+      </label>
+      <label class="segment">
+        <input type="radio" name="mode" value="remote" id="mode-remote">
+        <span>Remote server</span>
+      </label>
+    </fieldset>
+  </header>
+
+  <main id="main">
+    <section class="panel" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Settings</h2>
+
+      <div class="field" id="endpoint-field" hidden>
+        <label for="endpoint-input">Prediction endpoint</label>
+        <input type="url" id="endpoint-input" inputmode="url" autocomplete="off" spellcheck="false" placeholder="http://localhost:8000/predict">
+      </div>
+
+      <div class="field">
+        <label for="threshold-input">
+          Referral threshold
+          <output id="threshold-value" for="threshold-input">50%</output>
+        </label>
+        <input type="range" id="threshold-input" min="0.1" max="0.9" step="0.05" value="0.5" aria-describedby="threshold-hint">
+        <p class="hint" id="threshold-hint">Probabilities at or above this value are flagged for referral. Applies to on-device mode; the server applies its own threshold in remote mode.</p>
+      </div>
+
+      <p class="privacy-note" id="privacy-note">Images are analysed on this device and are never uploaded or stored.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="upload-heading">
+      <h2 id="upload-heading">Screen a chest X-ray</h2>
+
+      <div class="dropzone" id="dropzone">
+        <svg class="dropzone-icon" viewBox="0 0 24 24" width="36" height="36" aria-hidden="true" focusable="false">
+          <path d="M12 16V4m0 0l-4 4m4-4l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <p class="dropzone-title">Drag &amp; drop a chest X-ray here</p>
+        <p class="hint">PNG or JPEG, frontal (PA/AP) view. Screening starts automatically.</p>
+        <div class="dropzone-actions">
+          <button type="button" class="button" id="pick-button">Choose image</button>
+          <button type="button" class="button button-secondary" id="camera-button">Use camera</button>
+        </div>
+      </div>
+
+      <input type="file" id="file-input" accept="image/*" class="visually-hidden" tabindex="-1" aria-hidden="true">
+      <input type="file" id="camera-input" accept="image/*" capture="environment" class="visually-hidden" tabindex="-1" aria-hidden="true">
+
+      <figure class="preview" id="preview" hidden>
+        <img id="preview-image" alt="Selected chest X-ray preview">
+        <figcaption>
+          <span class="preview-name" id="preview-name"></span>
+          <button type="button" class="button button-secondary" id="clear-image-button">Remove image</button>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="panel" id="status-panel" aria-labelledby="status-heading" hidden>
+      <h2 id="status-heading" class="visually-hidden">Progress</h2>
+      <div class="status" role="status">
+        <div class="progress" aria-hidden="true"><span></span></div>
+        <p id="status-text">Preparing…</p>
+      </div>
+    </section>
+
+    <div class="error-box" id="error-box" role="alert" hidden>
+      <p class="error-title" id="error-title">Something went wrong</p>
+      <p id="error-message"></p>
+      <p><a href="model/README.md" id="error-link" hidden>How to install the model (model/README.md)</a></p>
+    </div>
+
+    <section class="panel result" id="result-panel" aria-labelledby="result-heading" aria-live="polite" hidden>
+      <h2 id="result-heading" tabindex="-1">Screening result</h2>
+      <div class="result-card" id="result-card">
+        <p class="result-probability"><span id="result-probability">–</span><span class="unit">%</span></p>
+        <p class="result-label" id="result-label"></p>
+        <dl class="result-meta">
+          <div><dt>Threshold</dt><dd id="result-threshold"></dd></div>
+          <div><dt>Mode</dt><dd id="result-mode"></dd></div>
+          <div><dt>Time</dt><dd id="result-time"></dd></div>
+          <div><dt>Latency</dt><dd id="result-latency"></dd></div>
+        </dl>
+        <p class="result-disclaimer" id="result-disclaimer">Decision-support only. Not a medical diagnosis. Confirm with a qualified radiologist.</p>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="history-heading">
+      <div class="history-head">
+        <h2 id="history-heading">Session history</h2>
+        <button type="button" class="button button-secondary" id="clear-history-button">Clear all</button>
+      </div>
+      <p class="hint">Screening results from this session, stored on this device only. No images are ever saved.</p>
+      <ol class="history-list" id="history-list"></ol>
+      <p class="history-empty" id="history-empty">No screenings yet this session.</p>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>In on-device mode, Sehat runs entirely on this computer — no accounts, no trackers, no analytics.</p>
+    <p><strong>Decision-support only. Not a medical diagnosis. Confirm with a qualified radiologist.</strong></p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

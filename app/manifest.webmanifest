@@ -1,0 +1,26 @@
+{
+  "name": "Sehat — TB Screening",
+  "short_name": "Sehat",
+  "description": "Offline-first chest X-ray screening decision-support for TB in low-resource clinics. Decision-support only — not a medical diagnosis.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f9f8",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# Public dataset sources and integrity metadata.
+#
+# URLs point to the original publishers; checksums are verified after download.
+# `null` checksums mean "publisher does not provide one" — record the observed
+# digest here after your first verified download to pin the bytes forever.
+# Mirrors may be added as additional list entries without any code change.
+
+shenzhen:
+  urls:
+    - https://openi.nlm.nih.gov/imgs/collections/ChinaSet_AllFiles.zip
+  sha256:
+    - null
+
+montgomery:
+  urls:
+    - https://openi.nlm.nih.gov/imgs/collections/NLM-MontgomeryCXRSet.zip
+  sha256:
+    - null
+
+nih_cxr:
+  # NIH hosts ChestX-ray14 on Box (~45 GB, 12 archives) behind account-bound
+  # links, so URLs must be supplied here. First URL: Data_Entry_2017.csv
+  # metadata; then image archive URLs. See:
+  #   https://nihcc.app.box.com/v/ChestXray-NIHCC
+  # Mirrors: Kaggle "nih-chest-xrays", AWS Open Data registry.
+  urls: []
+  sha256: []
+  max_archives: 1 # subset: only the first N archives are downloaded
+  max_per_class: 5000 # subset: cap on pneumonia / normal rows kept

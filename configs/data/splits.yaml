@@ -1,0 +1,8 @@
+# Default split strategy for `sehat-data build-manifest`.
+# CLI flags (--strategy, --val-frac, ...) always win over these defaults.
+
+strategy: patient # patient | site-holdout
+val_frac: 0.1
+test_frac: 0.1
+seed: 42
+holdout_site: montgomery # reserved as test_external when strategy=site-holdout

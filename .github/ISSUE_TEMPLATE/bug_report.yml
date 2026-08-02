@@ -1,0 +1,91 @@
+name: Bug Report
+description: Report a defect in data, training, evaluation, export, or serving
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please **never include patient data (PHI), real X-ray images from a clinic, or any identifiable information** in an issue. If you need to share an image, use one of the public datasets documented in `docs/data_card.md`.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      description: Which part of the pipeline is misbehaving?
+      options:
+        - Data (manifests, splits, preprocessing)
+        - Training (sehat.training)
+        - Evaluation (sehat.eval, metrics, model card)
+        - Export (ONNX, INT8, benchmark)
+        - Serving (FastAPI, /healthz, /metadata, /predict)
+        - Clinic PWA
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including any error messages.
+      placeholder: "Example: `python -m sehat.export.benchmark model.onnx` exits with ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal commands or code, starting from a fresh clone. Include the config file if relevant.
+      placeholder: |
+        1. `uv sync --all-extras`
+        2. `python -m sehat.training.train --config configs/train/tb_baseline.yaml`
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      description: Output of `git rev-parse HEAD` (or the release tag).
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, hardware (CPU/GPU), and how you installed (uv or pip).
+      placeholder: "macOS 15, Python 3.12, CPU-only, installed via uv"
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste the full traceback or log excerpt. Redact any local paths that identify a person or institution.
+      render: shell
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: This report contains no patient data (PHI) or identifiable information.
+          required: true
+        - label: I have searched existing issues for duplicates.
+          required: true

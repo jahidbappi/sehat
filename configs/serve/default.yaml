@@ -1,0 +1,46 @@
+# Sehat serving configuration.
+#
+# Parsed by sehat.serving.config (PyYAML when installed, otherwise a
+# stdlib subset parser). Keep to the supported subset: nested mappings,
+# scalars, inline lists, and comments. No block sequences ("- item"),
+# anchors, or multi-line strings.
+
+service:
+  name: sehat-serving
+
+model:
+  # Path to the served artifact (.onnx preferred, torch checkpoint as
+  # fallback). Overridden by the SEHAT_MODEL_PATH env var or by
+  # create_app(model_path=...). null means "not configured" -> /predict
+  # answers 503 until a model is provided.
+  path: null
+  version: "0.1.0"
+  arch: resnet18
+  # Binary screening head: index 0 is the negative class, index 1 positive.
+  labels: [negative, positive]
+
+preprocessing:
+  # Must match the training-time validation transforms.
+  image_size: 224
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+inference:
+  # P(positive) >= threshold is reported as the positive label.
+  # Overridable via the SEHAT_THRESHOLD env var.
+  threshold: 0.5
+
+export:
+  # ONNX contract shared with sehat.export.onnx_export.
+  opset: 17
+  dynamic_batch: true
+  image_size: 224
+
+benchmark:
+  # Defaults for sehat.export.benchmark.benchmark_latency.
+  n_runs: 50
+  warmup: 10
+
+limits:
+  # Maximum accepted X-ray upload size in megabytes.
+  max_upload_mb: 15

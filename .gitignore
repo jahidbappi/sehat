@@ -1,0 +1,37 @@
+# Byte-compiled / packaging
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tooling caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Data, artifacts, and experiments — never commit these.
+# Anchored to repo root so source packages like src/sehat/data/ are NOT ignored.
+# DVC pointer files (*.dvc) and .dvc/config MUST be committed; only the cache is ignored.
+/data/
+/artifacts/
+/mlruns/
+/checkpoints/
+/models/
+*.onnx
+*.tflite
+.dvc/cache
+.dvc/tmp
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

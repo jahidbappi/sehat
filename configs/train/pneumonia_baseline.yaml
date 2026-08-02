@@ -1,0 +1,28 @@
+# Baseline pneumonia screening model.
+# Train with: python -m sehat.training.train --config configs/train/pneumonia_baseline.yaml
+
+# Model
+arch: convnext_tiny
+pretrained: true
+dropout: 0.2
+image_size: 224
+
+# Data
+manifest_path: data/manifests/pneumonia_manifest.csv
+disease: pneumonia
+batch_size: 32
+num_workers: 4
+weighted_sampler: true
+pos_weight: null # alternative to weighted_sampler; set one or the other
+
+# Optimisation
+lr: 3.0e-4
+weight_decay: 1.0e-4
+epochs: 20
+patience: 5
+seed: 42
+
+# Tracking / artifacts
+mlflow_experiment: sehat-pneumonia
+mlflow_tracking_uri: null # defaults to local ./mlruns when unset
+checkpoint_dir: checkpoints/pneumonia_baseline

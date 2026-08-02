@@ -1,0 +1,45 @@
+# VCS and CI metadata
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Docker build files themselves
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Python caches and virtualenvs
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Tests and docs are not needed at serving time
+tests/
+docs/
+
+# Data, checkpoints, and exported artifacts are mounted at runtime,
+# never baked into the image
+data/
+models/
+artifacts/
+checkpoints/
+*.ckpt
+*.pt
+*.pth
+*.onnx
+
+# Docs source is excluded, but README.md is required by pyproject metadata
+*.md
+!README.md
+
+# OS / editor noise
+.DS_Store
+.cursor/
+.idea/
+.vscode/

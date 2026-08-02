@@ -1,0 +1,26 @@
+# Evaluation config: TB screening model
+# Consumed by sehat.eval.report.evaluate_checkpoint (via load_eval_config).
+# Keep to flat / two-space-indented scalars so the stdlib fallback parser
+# can read this file when PyYAML is unavailable.
+
+disease: TB
+split: test
+arch: densenet121
+num_classes: 1
+pretrained: false
+batch_size: 32
+
+checkpoint: checkpoints/tb/best.ckpt
+manifest: data/manifest.csv
+out_dir: eval_outputs/tb
+
+# Clinical operating point: screening must hold specificity high so
+# confirmatory testing capacity is not overwhelmed.
+target_specificity: 0.95
+ece_bins: 15
+
+# Fairness analysis
+group_cols: [sex, age_band, site]
+disparity_margin: 0.05
+n_boot: 1000
+seed: 0

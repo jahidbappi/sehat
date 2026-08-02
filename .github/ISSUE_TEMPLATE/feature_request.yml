@@ -1,0 +1,60 @@
+name: Feature Request
+description: Propose an improvement or a new capability
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Project Sehat is **decision-support software, not a medical device** (see `docs/ethics.md`). Features that blur that line will be declined, however useful they might seem. Please check `docs/roadmap.md` — requests aligned with the current milestone move fastest.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Describe the use case or pain point. Deployment details (setting, hardware, connectivity) are especially valuable.
+      placeholder: "In a clinic setting with ..., I currently cannot ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like to exist? Sketches of API, config, or UI are welcome.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Data / datasets
+        - Training
+        - Evaluation / fairness
+        - Export / edge performance
+        - Serving / API
+        - Clinic PWA
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What workarounds or other approaches have you tried?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have checked the roadmap and existing issues for duplicates.
+          required: true
+        - label: This request is consistent with decision-support-only positioning (no diagnostic claims).
+          required: true

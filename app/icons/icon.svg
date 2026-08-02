@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Sehat  lungs mark">
+  <rect width="512" height="512" rx="112" fill="#0f766e"/>
+  <g fill="none" stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 104v88"/>
+    <path d="M256 192c-22 24-36 32-52 44"/>
+    <path d="M256 192c22 24 36 32 52 44"/>
+  </g>
+  <path fill="#ffffff" d="M236 236c-8-12-24-18-38-12-34 14-58 52-64 100-4 32 2 58 18 74 12 12 30 16 46 10 24-9 38-34 38-66v-106z"/>
+  <path fill="#ffffff" d="M276 236c8-12 24-18 38-12 34 14 58 52 64 100 4 32-2 58-18 74-12 12-30 16-46 10-24-9-38-34-38-66v-106z"/>
+</svg>
